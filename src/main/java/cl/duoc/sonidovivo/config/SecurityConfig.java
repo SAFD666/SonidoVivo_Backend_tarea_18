@@ -24,13 +24,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Configuración de Spring Security:
- *  - API sin sesión de servidor (STATELESS): cada solicitud trae su JWT.
- *  - CSRF desactivado porque el token viaja en el header Authorization, no en una cookie.
- *  - Rutas públicas: login, registro, lectura del catálogo y Swagger. Todo lo demás requiere token.
- *  - Los permisos por rol se aplican en cada controlador con @PreAuthorize (gracias a @EnableMethodSecurity).
- */
+
+// Configuración de Spring Security:
+//  - API sin sesión de servidor (STATELESS): cada solicitud trae su JWT.
+//  - CSRF desactivado porque el token viaja en el header Authorization, no en una cookie.
+//  - Rutas públicas: login, registro y Swagger. Todo lo demás requiere token.
+//  - Los permisos por rol se aplican en cada controlador con @PreAuthorize (gracias a @EnableMethodSecurity).
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -59,7 +59,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register").permitAll())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register").permitAll()
+                        .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(entryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
@@ -68,7 +69,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /** CORS: solo el frontend configurado puede llamar a la API desde el navegador. CORS no reemplaza la autorización. */
+    // CORS: solo el frontend configurado puede llamar a la API desde el navegador. CORS no reemplaza la autorización. */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
